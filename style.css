@@ -1,0 +1,629 @@
+/* =====================================================================
+   style.css : TOUTE L'APPARENCE DU PORTFOLIO
+   Ce fichier est relié à index.html par la ligne :
+   <link rel="stylesheet" href="style.css" />
+
+   COMMENT LIRE UNE RÈGLE CSS :
+     selecteur {
+       propriete: valeur;
+     }
+   Le sélecteur dit QUI on modifie, les propriétés disent COMMENT.
+     p          = toutes les balises <p>
+     .card      = tous les éléments qui ont class="card"   (le point = une classe)
+     #menu      = l'élément qui a id="menu"                (le dièse = un id)
+     .menu a    = les liens <a> qui sont À L'INTÉRIEUR d'un élément .menu
+     a:hover    = un lien QUAND la souris passe dessus
+
+   LES UNITÉS :
+     px  = pixel, taille fixe
+     %   = pourcentage de l'élément parent
+     vh  = pourcentage de la hauteur de l'écran (100vh = tout l'écran)
+     vw  = pourcentage de la largeur de l'écran
+     fr  = fraction de la place disponible dans une grille
+     s   = secondes (pour les animations)
+   ===================================================================== */
+
+
+/* =====================================================================
+   1. LES COULEURS (variables réutilisées partout)
+   ===================================================================== */
+
+/* :root = la racine de la page. Ce qu'on déclare ici est disponible partout */
+/* ===== 0. LA POLICE PERSONNALISÉE ===== */
+@font-face {                                           /* @font-face = "je déclare une nouvelle police" */
+  font-family: "Cyberway";                             /* le nom que je lui donne, à réutiliser plus bas */
+  src: url("fonts/cyberway.otf") format("opentype");   /* chemin du fichier + son format (.otf = opentype) */
+  font-display: swap;                                  /* texte affiché tout de suite avec une police de secours, puis remplacé par Cyberway */
+}
+
+
+:root {
+  /* --nom: valeur; crée une VARIABLE. On l'utilise ensuite avec var(--nom).
+     Pour changer une couleur sur tout le site, il suffit de modifier UNE ligne ici.
+     Code couleur #RRVVBB : 2 caractères pour le Rouge, 2 pour le Vert, 2 pour le Bleu,
+     de 00 (rien) à ff (maximum). */
+  --bg: #0a0a0f;        /* fond de page presque noir */
+  --panel: #12121a;     /* fond des cartes, un peu plus clair que le fond */
+  --yellow: #fcee0a;    /* jaune néon : titres, boutons, jauges */
+  --cyan: #00f0ff;      /* cyan : sous titres, tags, survols */
+  --red: #ff003c;       /* rouge : glitch et message d'erreur */
+  --text: #e4e4e7;      /* texte principal, gris très clair */
+  --muted: #8b8b99;     /* texte secondaire, gris moyen */
+}
+
+
+/* =====================================================================
+   2. LES BASES
+   ===================================================================== */
+
+/* * = TOUS les éléments de la page */
+* {
+  box-sizing: border-box;  /* la largeur d'une boîte inclut sa bordure et son padding
+                              (sinon une boîte de 100px avec 10px de padding ferait 120px) */
+  margin: 0;               /* supprime les marges extérieures ajoutées par le navigateur */
+  padding: 0;              /* supprime les marges intérieures ajoutées par le navigateur */
+}
+
+html {
+  scroll-behavior: smooth; /* un clic sur un lien #section fait défiler en douceur */
+}
+
+body {
+  background-color: var(--bg);        /* fond presque noir */
+  color: var(--text);                 /* couleur du texte par défaut */
+  font-family: "Inter", sans-serif;   /* police Inter, sinon une police sans empattement de secours */
+  line-height: 1.6;                   /* hauteur de ligne = 1,6 fois la taille du texte : plus aéré */
+
+  /* La grille du fond, dessinée avec deux dégradés superposés :
+     1er dégradé : 1px de cyan à 4 % d'opacité (0.04), puis transparent = une ligne horizontale
+     2e dégradé : pareil mais tourné de 90 degrés = une ligne verticale
+     rgba(rouge, vert, bleu, transparence) : transparence de 0 (invisible) à 1 (opaque) */
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;         /* le motif se répète tous les 40px : des carreaux de 40 × 40 */
+}
+
+a {
+  color: inherit;          /* les liens prennent la couleur du texte autour (pas le bleu par défaut) */
+  text-decoration: none;   /* retire le soulignement des liens */
+}
+
+ul {
+  list-style: none;        /* retire les puces (points) devant les éléments de liste */
+}
+
+/* .container : boîte qui centre le contenu et limite sa largeur */
+.container {
+  max-width: 1000px;       /* jamais plus large que 1000px, même sur un grand écran */
+  margin: 0 auto;          /* 0 en haut et en bas, "auto" à gauche et à droite = centré */
+  /* 16px d'espace sur les côtés, pour ne pas coller aux bords sur mobile.
+     On ne touche QUE la gauche et la droite : "padding: 0 16px" mettait aussi le haut et le bas à 0,
+     et comme .container (une classe) passe avant section (une balise), l'espace entre les sections disparaissait */
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+
+/* =====================================================================
+   3. LA BARRE DE NAVIGATION (fixée en haut)
+   ===================================================================== */
+
+header {
+  position: fixed;         /* reste au même endroit de l'écran, même quand on défile */
+  top: 0;                  /* collée tout en haut */
+  left: 0;                 /* du bord gauche... */
+  right: 0;                /* ...au bord droit = toute la largeur */
+  z-index: 10;             /* ordre d'empilement : 10 = passe AU DESSUS du contenu (qui est à 0) */
+  background: rgba(10, 10, 15, 0.85);                 /* fond noir à 85 % : on devine le contenu dessous */
+  backdrop-filter: blur(6px);                         /* floute ce qui passe derrière : effet verre dépoli */
+  border-bottom: 1px solid rgba(252, 238, 10, 0.2);   /* fine ligne jaune à 20 % sous la barre */
+}
+
+nav {
+  display: flex;                    /* FLEXBOX : range les enfants côte à côte sur une ligne */
+  justify-content: space-between;   /* 1er enfant tout à gauche, dernier tout à droite */
+  align-items: center;              /* enfants centrés verticalement */
+  height: 64px;                     /* hauteur de la barre */
+}
+
+.logo {
+  font-family: "Cyberway", sans-serif;  /* police futuriste */
+  font-weight: 800;                     /* très gras (400 = normal, 700 = gras) */
+  color: var(--yellow);                 /* jaune */
+}
+
+/* La liste des liens de navigation */
+.menu {
+  display: flex;                        /* liens côte à côte */
+  gap: 24px;                            /* 24px d'écart entre chaque lien */
+  font-family: "Rajdhani", sans-serif;  /* police "interface tech" */
+  text-transform: uppercase;            /* tout en MAJUSCULES */
+  letter-spacing: 1px;                  /* lettres légèrement espacées */
+}
+
+/* :hover = QUAND la souris passe sur un lien du menu */
+.menu a:hover {
+  color: var(--yellow);                 /* il devient jaune */
+}
+
+/* Le bouton [ Menu ] pour mobile */
+.burger {
+  display: none;                        /* CACHÉ sur ordinateur (il apparaît sur mobile, voir bloc 12) */
+  background: none;                     /* pas de fond gris de bouton */
+  border: none;                         /* pas de bordure de bouton */
+  color: var(--yellow);                 /* texte jaune */
+  font-family: "Rajdhani", sans-serif;
+  font-size: 16px;
+  cursor: pointer;                      /* petite main au survol = "c'est cliquable" */
+}
+
+
+/* =====================================================================
+   4. LES SECTIONS ET LES TITRES
+   ===================================================================== */
+
+section {
+  padding: 96px 0 40px;     /* espace intérieur : 96px en haut, 0 sur les côtés, 40px en bas */
+  scroll-margin-top: 64px;  /* en arrivant par un lien, on s'arrête 64px plus haut :
+                               le titre n'est pas caché sous la barre fixe de 64px */
+}
+
+/* Le petit texte "// 01" au dessus des titres */
+.code {
+  font-family: "Rajdhani", sans-serif;
+  color: var(--cyan);
+  letter-spacing: 4px;             /* lettres très espacées */
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+/* Titres de section (Fiche personnage, Parcours...) */
+h2 {
+  font-family: "Orbitron", sans-serif;
+  color: var(--yellow);
+  font-size: 32px;
+  margin-bottom: 20px;             /* 20px sous le titre : il reste collé à ses propres blocs */
+  /* Ombre du texte : décalage horizontal 0, vertical 0, flou 10px, jaune à 60 %.
+     Sans décalage, l'ombre fait un halo tout autour = LUEUR NÉON */
+  text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);
+}
+
+/* Titres des cartes (IDENTITÉ, LANGUES...) */
+h3 {
+  font-family: "Rajdhani", sans-serif;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+/* Petits titres (nom d'un poste, d'un projet) */
+h4 {
+  font-size: 17px;
+}
+
+/* Texte secondaire : gris et un peu plus petit */
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+
+/* =====================================================================
+   5. L'ACCUEIL
+   ===================================================================== */
+
+.hero {
+  min-height: 100vh;               /* au moins toute la hauteur de l'écran */
+  display: flex;                   /* flexbox... */
+  flex-direction: column;          /* ...en COLONNE : les éléments s'empilent de haut en bas */
+  justify-content: center;         /* centrés verticalement */
+  align-items: center;             /* centrés horizontalement */
+  text-align: center;              /* texte centré */
+  gap: 20px;                       /* 20px entre chaque élément */
+}
+
+/* Ton nom en grand */
+.hero h1 {
+  font-family: "Orbitron", sans-serif;
+  color: var(--yellow);
+  /* clamp(minimum, idéal, maximum) : la taille idéale est 8 % de la largeur de l'écran,
+     mais jamais moins de 32px ni plus de 64px.
+     Téléphone de 390px : 8 % = 31px, donc 32px. Écran de 1280px : 102px, donc 64px */
+  font-size: clamp(32px, 8vw, 64px);
+  text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);   /* lueur néon */
+  animation: glitch 4s infinite;                    /* l'effet glitch, un cycle toutes les 4 secondes */
+}
+
+/* L'effet glitch sur un cycle de 4 secondes :
+   de 0 % à 92 % (0 à 3,68 s) : rien ne bouge
+   à 94 % (3,76 s) : le texte se décale et se dédouble en rouge à gauche, cyan à droite
+   à 96 % (3,84 s) : même chose dans l'autre sens
+   puis retour au calme jusqu'à 100 % */
+@keyframes glitch {
+  0%, 92%, 100% {
+    transform: translate(0);                                   /* à sa place normale */
+    text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);             /* lueur normale */
+  }
+  94% {
+    transform: translate(-2px, 1px);                           /* 2px à gauche, 1px vers le bas */
+    text-shadow: -3px 0 var(--red), 3px 0 var(--cyan);         /* copie rouge à gauche, cyan à droite */
+  }
+  96% {
+    transform: translate(2px, -1px);                           /* 2px à droite, 1px vers le haut */
+    text-shadow: 3px 0 var(--red), -3px 0 var(--cyan);         /* copies inversées */
+  }
+}
+
+
+/* =====================================================================
+   6. LES BOUTONS (coins coupés)
+   ===================================================================== */
+
+.btn {
+  display: inline-block;           /* se comporte comme une boîte (accepte un padding) mais reste sur la ligne */
+  padding: 12px 28px;              /* 12px en haut et en bas, 28px à gauche et à droite */
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;                /* gras */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--yellow);       /* fond jaune */
+  color: var(--bg);                /* texte noir */
+  border: none;                    /* pas de bordure */
+  cursor: pointer;                 /* petite main au survol */
+  /* clip-path: polygon(...) découpe la boîte en reliant ces 6 points (x y) dans l'ordre :
+     (0 0)                     coin haut gauche
+     (100% moins 14px, 0)      en haut, 14px avant le coin droit
+     (100%, 14px)              à droite, 14px sous le coin : diagonale = coin coupé
+     (100% 100%)               coin bas droit
+     (14px, 100%)              en bas, 14px après le coin gauche
+     (0, 100% moins 14px)      à gauche, 14px au dessus du coin : diagonale = coin coupé
+     calc() permet de faire un calcul entre deux unités différentes (% et px) */
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  transition: background 0.3s;     /* quand le fond change, il change en douceur sur 0,3 seconde */
+}
+
+/* Au survol, le fond jaune devient cyan (en douceur grâce à la transition) */
+.btn:hover {
+  background: var(--cyan);
+}
+
+/* Variante "contour" : s'ajoute à .btn dans le HTML avec class="btn btn-outline" */
+.btn-outline {
+  background: transparent;         /* pas de fond */
+  color: var(--cyan);              /* texte cyan */
+  outline: 1px solid var(--cyan);  /* contour cyan de 1px */
+  outline-offset: -1px;            /* le contour est dessiné 1px vers l'intérieur */
+}
+
+.btn-outline:hover {
+  color: var(--bg);                /* au survol : le fond devient cyan (règle .btn:hover) et le texte noir */
+}
+
+
+/* =====================================================================
+   7. LES CARTES, LES GRILLES ET LES TAGS
+   ===================================================================== */
+
+.card {
+  background: var(--panel);                      /* fond gris foncé */
+  border: 1px solid rgba(252, 238, 10, 0.25);    /* bordure jaune à 25 % */
+  padding: 24px;                                 /* 24px d'espace intérieur */
+  /* coins coupés comme les boutons, avec 16px au lieu de 14px */
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  transition: transform 0.3s, border-color 0.3s; /* anime en douceur le déplacement ET la bordure */
+}
+
+/* Au survol : la carte monte de 4px (Y négatif = vers le haut) et sa bordure devient cyan */
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--cyan);
+}
+
+/* GRID : range les enfants dans un tableau invisible de colonnes */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;         /* 2 colonnes de même largeur (1 fraction chacune) */
+  gap: 24px;                              /* 24px entre les cases */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* 3 colonnes égales (raccourci de "1fr 1fr 1fr") */
+  gap: 24px;
+}
+
+/* Le conteneur des étiquettes */
+.tags {
+  display: flex;           /* étiquettes côte à côte */
+  flex-wrap: wrap;         /* elles passent à la ligne quand il n'y a plus de place */
+  gap: 8px;                /* 8px entre chaque étiquette */
+}
+
+/* Une étiquette (Python, Docker...) */
+.tag {
+  font-family: "Rajdhani", sans-serif;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--cyan);
+  border: 1px solid rgba(0, 240, 255, 0.4);   /* bordure cyan à 40 % */
+  padding: 2px 8px;                           /* 2px en haut et en bas, 8px sur les côtés */
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Au survol : l'étiquette se remplit de cyan et son texte devient noir */
+.tag:hover {
+  background: var(--cyan);
+  color: var(--bg);
+}
+
+
+/* =====================================================================
+   8. LA FICHE PERSONNAGE
+   ===================================================================== */
+
+/* Grille à 3 colonnes : identité | portrait | attributs */
+.fiche {
+  display: grid;
+  grid-template-columns: 1fr 340px 1fr;   /* colonne souple, 340px fixes pour le portrait, colonne souple */
+  gap: 24px;
+  align-items: center;                    /* les 3 blocs centrés verticalement entre eux */
+}
+
+.portrait {
+  position: relative;
+}
+
+.portrait img {
+  width: 100%;             /* l'image prend toute la largeur de sa colonne */
+  display: block;          /* supprime le petit espace blanc que le navigateur met sous les images */
+  aspect-ratio: 3 / 4;     /* NOUVEAU : cadre vertical, 3 de large pour 4 de haut */
+  object-fit: cover;       /* NOUVEAU : l'image remplit le cadre sans être déformée, le surplus est coupé */
+  object-position: top;    /* NOUVEAU : on garde le haut de l'image (le visage) */
+  /* La photo est détourée (fond transparent) : on met derrière un halo cyan discret
+     et un trait jaune en bas pour qu'elle ne flotte pas dans le vide */
+  background: radial-gradient(circle at 50% 35%, rgba(0, 240, 255, 0.18), transparent 70%);
+  border-bottom: 2px solid var(--yellow);
+}
+
+/* Liste d'identité : dt = l'intitulé (NOM), dd = la valeur (RINN) */
+.identite dt {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 12px;                 /* petit */
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);             /* gris */
+}
+
+.identite dd {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 18px;                 /* plus grand que l'intitulé */
+  margin-bottom: 8px;              /* espace avant l'intitulé suivant */
+  padding-bottom: 6px;             /* espace entre le texte et le trait */
+  border-bottom: 1px solid rgba(252, 238, 10, 0.1);   /* trait jaune très discret (10 %) */
+}
+
+/* Une jauge = deux boîtes l'une dans l'autre.
+   .jauge = le fond (la barre vide) */
+.jauge {
+  height: 6px;                                   /* 6px de haut */
+  background: var(--bg);                         /* fond noir */
+  border: 1px solid rgba(252, 238, 10, 0.2);     /* contour jaune à 20 % */
+  margin: 4px 0;                                 /* 4px au dessus et en dessous */
+}
+
+/* .jauge div = la boîte À L'INTÉRIEUR de la jauge = le remplissage jaune.
+   Sa largeur est écrite dans le HTML : style="width:90%" pour un niveau 9 sur 10 */
+.jauge div {
+  height: 100%;                    /* toute la hauteur de la jauge */
+  background: var(--yellow);
+}
+
+/* Un attribut = nom + jauge + description */
+.attribut {
+  margin-bottom: 14px;             /* espace entre deux attributs */
+}
+
+/* La ligne "NOM ........ NIVEAU" */
+.attribut .ligne {
+  display: flex;
+  justify-content: space-between;  /* le nom à gauche, le niveau à droite */
+  font-family: "Rajdhani", sans-serif;
+  text-transform: uppercase;
+}
+
+/* span + span = un span qui suit un autre span, donc le 2e (le niveau, ex. "Natif").
+   Quand il n'y a qu'un span (les soft skills), rien n'est coloré */
+.attribut .ligne span + span {
+  color: var(--yellow);
+}
+
+
+/* =====================================================================
+   9. LA FRISE DU PARCOURS
+   ===================================================================== */
+
+/* La ligne verticale de la frise, c'est simplement la bordure gauche de la liste */
+.timeline {
+  border-left: 1px solid rgba(252, 238, 10, 0.3);   /* ligne jaune à 30 % */
+  padding-left: 24px;                               /* le texte commence 24px après la ligne */
+}
+
+/* Une étape de la frise */
+.timeline li {
+  position: relative;              /* repère pour placer le carré jaune */
+  margin-bottom: 28px;             /* espace entre deux étapes */
+}
+
+/* Le petit carré jaune devant chaque étape.
+   left: -30px = 24px de padding + 1px de ligne + 5px (la moitié du carré de 10px)
+   : le carré est pile centré sur la ligne */
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 6px;                        /* aligné avec la première ligne de texte */
+  width: 10px;
+  height: 10px;
+  background: var(--yellow);
+}
+
+/* Les dates, en cyan */
+.date {
+  font-family: "Rajdhani", sans-serif;
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+/* Les missions sont une liste DANS l'étape */
+.missions li {
+  font-size: 14px;
+  margin: 2px 0 0;                 /* 2px au dessus, 0 ailleurs (annule le margin-bottom de .timeline li) */
+}
+
+/* Les missions sont aussi des "li" dans .timeline : on leur retire le carré jaune */
+.missions li::before {
+  display: none;
+}
+
+/* Le chevron › devant chaque mission, en jaune */
+.missions li span {
+  color: var(--yellow);
+}
+
+
+/* =====================================================================
+   10. LE FORMULAIRE ET LE PIED DE PAGE
+   ===================================================================== */
+
+/* Les intitulés au dessus des champs (NOM, EMAIL, MESSAGE) */
+label {
+  display: block;                  /* prend toute sa ligne : le champ passe en dessous */
+  font-family: "Rajdhani", sans-serif;
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+/* La virgule applique la même règle aux deux : champs sur une ligne ET zone de message */
+input,
+textarea {
+  width: 100%;                     /* toute la largeur de la carte */
+  padding: 12px;                   /* espace intérieur pour ne pas coller le texte au bord */
+  margin-bottom: 16px;             /* espace avant l'intitulé suivant */
+  background: var(--bg);           /* fond noir */
+  color: var(--text);              /* texte clair */
+  font: inherit;                   /* même police que la page (les navigateurs en mettent une autre par défaut) */
+  border: 1px solid rgba(252, 238, 10, 0.3);   /* bordure jaune à 30 % */
+}
+
+/* :focus = QUAND on a cliqué dans le champ et qu'on tape dedans */
+input:focus,
+textarea:focus {
+  outline: none;                   /* retire le contour bleu ajouté par le navigateur */
+  border-color: var(--cyan);       /* la bordure devient cyan */
+}
+
+/* Le message "Transmission..." / "Message transmis" / "Échec" (#form-status = id="form-status") */
+#form-status {
+  margin-top: 12px;
+  font-family: "Rajdhani", sans-serif;
+}
+
+/* Le pied de page "© 2026 Maxim Rinn" */
+footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 14px;
+  border-top: 1px solid rgba(252, 238, 10, 0.2);   /* ligne jaune à 20 % au dessus */
+  margin-top: 60px;
+}
+
+
+/* =====================================================================
+   11. L'ANIMATION D'APPARITION (fondu au scroll)
+   Principe : les éléments .reveal sont invisibles au départ.
+   Le JavaScript leur ajoute la classe .visible quand ils arrivent à l'écran,
+   et la transition fait le fondu entre les deux états.
+   ===================================================================== */
+
+.reveal {
+  opacity: 0;                         /* invisible (0 = transparent, 1 = opaque) */
+  transform: translateY(30px);        /* 30px plus bas que sa place */
+  transition: opacity 0.7s, transform 0.7s;   /* le passage à l'état visible dure 0,7 seconde */
+}
+
+/* .reveal.visible (deux classes COLLÉES) = un élément qui a les deux classes en même temps */
+.reveal.visible {
+  opacity: 1;                         /* visible */
+  transform: none;                    /* à sa place */
+}
+
+
+/* =====================================================================
+   12. LE RESPONSIVE
+   @media (max-width: 800px) { ... } : les règles à l'intérieur ne s'appliquent
+   QUE si l'écran fait 800px de large ou moins (téléphones, petites tablettes).
+   Elles remplacent les règles écrites plus haut.
+   ===================================================================== */
+
+@media (max-width: 800px) {
+
+  /* Le menu devient une liste déroulante cachée sous la barre */
+  .menu {
+    display: none;                 /* caché par défaut */
+    flex-direction: column;        /* liens les uns sous les autres */
+    position: absolute;            /* placé librement... */
+    top: 64px;                     /* ...juste sous la barre de 64px */
+    left: 0;
+    right: 0;                      /* sur toute la largeur */
+    background: var(--bg);         /* fond noir */
+    padding: 16px;
+  }
+
+  /* Quand le JavaScript ajoute la classe "open" (clic sur [ Menu ]), le menu s'affiche */
+  .menu.open {
+    display: flex;
+  }
+
+  /* Le bouton [ Menu ] apparaît */
+  .burger {
+    display: block;
+  }
+
+  /* Toutes les grilles passent sur UNE seule colonne : les blocs s'empilent */
+  .grid-2,
+  .grid-3,
+  .fiche {
+    grid-template-columns: 1fr;
+  }
+
+  .portrait {
+    max-width: 300px;              /* le portrait ne devient pas géant */
+    margin: 0 auto;                /* centré */
+    order: -1;                     /* passe AVANT les autres blocs de la fiche (ordre par défaut = 0) */
+  }
+
+  h2 {
+    font-size: 24px;               /* titres plus petits sur mobile */
+  }
+}
+
+/* Si la personne a désactivé les animations dans son système (confort visuel),
+   on coupe le glitch et le fondu : tout est visible tout de suite */
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 {
+    animation: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

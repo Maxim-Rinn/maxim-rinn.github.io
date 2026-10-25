@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maxim Rinn | Portfolio</title>
+  <meta name="description" content="Portfolio de Maxim Rinn, futur architecte des systèmes d'information à Epitech Strasbourg, spécialisé en cybersécurité. Recherche une alternance de deux ans et demi à partir de janvier 2027." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header>
+    <nav class="container">
+      <a href="#accueil" class="logo">Maxim RINN</a>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu">Menu</button>
+      <ul class="menu" id="menu">
+        <li><a href="#profil">Profil</a></li>
+        <li><a href="#parcours">Parcours</a></li>
+        <li><a href="#projets">Projets</a></li>
+        <li><a href="#certifications">Certifs</a></li>
+        <li><a href="#engagement">Engagement</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Accueil -->
+    <section id="accueil" class="hero container">
+      <h1>MAXIM RINN</h1>
+      <p class="muted">Futur architecte des systèmes d'information · Alternance dès janvier 2027</p>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+        <a href="#contact" class="btn">Me contacter</a>
+        <a href="#projets" class="btn btn-outline">Voir mes projets</a>
+      </div>
+      <p class="muted">
+        <a href="https://www.linkedin.com/in/maxim-rinn-71a7a8167" target="_blank" rel="noreferrer">LINKEDIN</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/Maxim-Rinn" target="_blank" rel="noreferrer">GITHUB</a>
+      </p>
+    </section>
+
+    <!-- Informations -->
+    <section id="profil" class="container">
+      <h2>Informations</h2>
+
+      <div class="fiche reveal">
+        <div class="card">
+          <h3>Identité</h3>
+          <dl class="identite">
+            <dt>Nom</dt><dd>RINN</dd>
+            <dt>Prénom</dt><dd>Maxim</dd>
+            <dt>Formation visée</dt><dd>Architecte des Systèmes d'Information</dd>
+            <dt>Spécialisation</dt><dd>Cybersécurité</dd>
+            <dt>Formation</dt><dd>EPITECH</dd>
+            <dt>Lieu</dt><dd>Strasbourg</dd>
+            <dt>Contrat</dt><dd>Alternance de deux ans et demi</dd>
+            <dt>Rythme</dt><dd>3 semaines en entreprise, 1 semaine à l'école</dd>
+            <dt>Disponibilité</dt><dd>Janvier 2027</dd>
+            <dt>Permis B</dt><dd>Véhiculé</dd>
+          </dl>
+        </div>
+
+        <div class="portrait">
+          <img src="photo-maxim.webp" alt="Portrait de Maxim Rinn" />
+        </div>
+
+        <div class="card">
+          <h3>Soft Skills</h3>
+          <div class="attribut"><div class="ligne"><span>Vision transverse</span></div><p class="muted">Double regard business et technique</p></div>
+          <div class="attribut"><div class="ligne"><span>Communication</span></div><p class="muted">Échanges avec clients, candidats et managers</p></div>
+          <div class="attribut"><div class="ligne"><span>Adaptabilité</span></div><p class="muted">Reconversion du business vers la technique</p></div>
+          <div class="attribut"><div class="ligne"><span>Analyse des besoins</span></div><p class="muted">Qualifier, reformuler, proposer</p></div>
+          <div class="attribut"><div class="ligne"><span>Autonomie</span></div><p class="muted">Supervision mise en place de A à Z</p></div>
+          <div class="attribut"><div class="ligne"><span>Rédaction technique</span></div><p class="muted">Documents d'architecture, appels d'offres</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2 reveal" style="margin-top:24px;">
+        <div class="card">
+          <h3>Langues</h3>
+          <div class="attribut"><div class="ligne"><span>Français</span><span>Natif</span></div><div class="jauge"><div style="width:100%"></div></div></div>
+          <div class="attribut"><div class="ligne"><span>Anglais</span><span>B2 / C1</span></div><div class="jauge"><div style="width:80%"></div></div></div>
+          <div class="attribut"><div class="ligne"><span>Allemand</span><span>B1</span></div><div class="jauge"><div style="width:55%"></div></div></div>
+        </div>
+        <div class="card">
+          <h3>Centres d'intérêt</h3>
+          <div class="tags">
+            <span class="tag">Nouvelles technologies &amp; IA</span>
+            <span class="tag">Informatique</span>
+            <span class="tag">Composition musicale</span>
+            <span class="tag">Randonnée &amp; exploration</span>
+            <span class="tag">Handball</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 reveal" style="margin-top:24px;">
+        <div class="card">
+          <h3>Systèmes &amp; virtualisation</h3>
+          <div class="tags">
+            <span class="tag">Windows Server</span><span class="tag">Linux / Debian</span><span class="tag">Active Directory</span>
+            <span class="tag">vSphere</span><span class="tag">Proxmox</span><span class="tag">Docker</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Supervision &amp; parc</h3>
+          <div class="tags"><span class="tag">Zabbix</span><span class="tag">SNMP</span><span class="tag">MDM / Intune</span></div>
+        </div>
+        <div class="card">
+          <h3>Développement (Epitech)</h3>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">C++</span><span class="tag">Java</span><span class="tag">JavaScript</span>
+            <span class="tag">PHP</span><span class="tag">HTML / CSS</span><span class="tag">React</span><span class="tag">Next.js</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Data &amp; DevOps (Epitech)</h3>
+          <div class="tags">
+            <span class="tag">SQL / NoSQL</span><span class="tag">MySQL</span><span class="tag">Redis</span><span class="tag">Kubernetes</span>
+            <span class="tag">Jenkins CI/CD</span><span class="tag">Traefik</span><span class="tag">API REST</span><span class="tag">NLP</span><span class="tag">Jupyter</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Parcours -->
+    <section id="parcours" class="container">
+      <h2>Parcours</h2>
+      <div class="grid-2 reveal">
+        <div>
+          <h3>Expériences professionnelles</h3>
+          <ul class="timeline">
+            <li>
+              <p class="date">Août 2025 → Déc. 2025</p>
+              <h4>Administrateur système et réseau (stage long)</h4>
+              <p class="muted">TennisPro · Entzheim</p>
+              <ul class="missions">
+                <li><span>› </span>Tests en environnement isolé, déploiement et paramétrage en production (vSphere, Debian)</li>
+                <li><span>› </span>Sondes, alertes et déclencheurs sous Zabbix (SNMP)</li>
+                <li><span>› </span>Document d'architecture technique de la supervision</li>
+                <li><span>› </span>Gestion du parc avec Microsoft Intune, conformité des postes</li>
+                <li><span>› </span>Support niveau 1, inventaire et réparation du matériel</li>
+              </ul>
+            </li>
+            <li>
+              <p class="date">Mars 2024 → Déc. 2024</p>
+              <h4>Consultant en recrutement informatique</h4>
+              <p class="muted">Hays · Strasbourg</p>
+              <ul class="missions">
+                <li><span>› </span>Développement commercial, veille de marché, portefeuille client</li>
+                <li><span>› </span>Qualification des besoins clients et candidats</li>
+                <li><span>› </span>Sourcing, approche directe et conduite d'entretiens</li>
+              </ul>
+            </li>
+            <li>
+              <p class="date">Sept. 2023 → Mars 2024</p>
+              <h4>IT Business Manager</h4>
+              <p class="muted">Objectware · Luxembourg</p>
+              <ul class="missions">
+                <li><span>› </span>Développement commercial et veille de marché</li>
+                <li><span>› </span>Réponses à appels d'offres</li>
+              </ul>
+            </li>
+            <li>
+              <p class="date">Août 2023 → Sept. 2023</p>
+              <h4>Tech Talent Specialist, Infrastructure &amp; Sécurité</h4>
+              <p class="muted">nexten.io · Luxembourg</p>
+              <ul class="missions">
+                <li><span>› </span>Sourcing et approche directe des candidats</li>
+                <li><span>› </span>Démonstrations client de la plateforme de recrutement</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Formations</h3>
+          <ul class="timeline">
+            <li>
+              <p class="date">2026 → 2029</p>
+              <h4>Architecte de Systèmes d'Information</h4>
+              <p class="muted">Epitech Strasbourg · RNCP 38114, niveau 7</p>
+            </li>
+            <li>
+              <p class="date">2025</p>
+              <h4>Administrateur d'Infrastructures Sécurisées</h4>
+              <p class="muted">LIORA / CyberUniversity · RNCP 37680, niveau 6</p>
+            </li>
+            <li>
+              <p class="date">2019 → 2022</p>
+              <h4>Master 2, Programme Grande École</h4>
+              <p class="muted">ICN Business School, Nancy</p>
+            </li>
+            <li>
+              <p class="date">2018 → 2019</p>
+              <h4>Bachelor Responsable du développement commercial</h4>
+              <p class="muted">IDRAC Lyon / CESINE Universidad, Santander</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projets -->
+    <section id="projets" class="container">
+      <h2>Projets</h2>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <p class="date">Projet de gouvernance · 2025</p>
+          <h4>Audit de sécurité du SI</h4>
+          <p class="muted" style="margin:8px 0 12px;">Audit de sécurité du système d'information d'une entreprise.</p>
+          <div class="tags"><span class="tag">Gouvernance</span><span class="tag">Audit</span><span class="tag">Sécurité SI</span></div>
+          <p style="margin-top:12px;"><a href="https://github.com/Maxim-Rinn/Projet-Academique-Audit-2025" target="_blank" rel="noreferrer" style="color:var(--yellow);">Voir le code →</a></p>
+        </div>
+        <div class="card">
+          <p class="date">Projet en entreprise · 2025</p>
+          <h4>Supervision open source</h4>
+          <p class="muted" style="margin:8px 0 12px;">Solution de supervision sous Debian 13 : réseau, pare-feu Fortinet, baies de stockage.</p>
+          <div class="tags"><span class="tag">Zabbix</span><span class="tag">SNMP</span><span class="tag">Debian</span><span class="tag">Fortinet</span></div>
+        </div>
+        <div class="card">
+          <p class="date">Projet personnel · 2026</p>
+          <h4>Ce portfolio</h4>
+          <p class="muted" style="margin:8px 0 12px;">Site responsive au style cyberpunk, en HTML, CSS et JavaScript.</p>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section id="certifications" class="container">
+      <h2>Certifications</h2>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <p class="date">2025</p>
+          <h4>Administrateur d'Infrastructures Sécurisées</h4>
+          <p class="muted">LIORA / CyberUniversity · RNCP 37680</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Engagement -->
+    <section id="engagement" class="container">
+      <h2>Engagement associatif</h2>
+      <div class="card reveal">
+        <p class="date">2026 → 2029</p>
+        <h4>Création d'EPILIVE</h4>
+        <p class="muted">Association de musique au sein d'EPITECH</p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="container">
+      <h2>Contact</h2>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h3>Coordonnées</h3>
+          <p class="muted">Email</p>
+          <p style="margin-bottom:12px;"><a href="mailto:maximrinn@icloud.com">maximrinn@icloud.com</a></p>
+          <p class="muted">Localisation</p>
+          <p style="margin-bottom:12px;">Strasbourg, France</p>
+          <p class="muted">Réseaux</p>
+          <p>
+            <a href="https://www.linkedin.com/in/maxim-rinn-71a7a8167" target="_blank" rel="noreferrer" style="color:var(--yellow);">LinkedIn →</a>
+            &nbsp;
+            <a href="https://github.com/Maxim-Rinn" target="_blank" rel="noreferrer" style="color:var(--yellow);">GitHub →</a>
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Envoyer un message</h3>
+          <!-- TODO : remplacer TON_ID par l'id Formspree -->
+          <form id="contact-form" action="https://formspree.io/f/TON_ID" method="POST">
+            <label for="name">Nom</label>
+            <input id="name" name="name" type="text" required placeholder="Votre nom" />
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="vous@entreprise.com" />
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required placeholder="Votre message..."></textarea>
+            <button type="submit" class="btn">Envoyer</button>
+            <p id="form-status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 Maxim Rinn</footer>
+
+  <script>
+    // Menu mobile
+    const burger = document.getElementById('burger')
+    const menu = document.getElementById('menu')
+    burger.addEventListener('click', () => {
+      menu.classList.toggle('open')
+      burger.textContent = menu.classList.contains('open') ? 'Fermer' : 'Menu'
+    })
+    menu.querySelectorAll('a').forEach((lien) => {
+      lien.addEventListener('click', () => {
+        menu.classList.remove('open')
+        burger.textContent = 'Menu'
+      })
+    })
+
+    // Apparition des blocs au scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.1 })
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+
+    // Formulaire de contact (envoi sans rechargement)
+    const form = document.getElementById('contact-form')
+    const status = document.getElementById('form-status')
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      status.textContent = 'Envoi en cours...'
+      status.style.color = 'var(--cyan)'
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        })
+        if (!res.ok) throw new Error()
+        status.textContent = 'Merci, votre message a bien été envoyé.'
+        form.reset()
+      } catch {
+        status.textContent = "L'envoi a échoué. Vous pouvez m'écrire à maximrinn@icloud.com"
+        status.style.color = 'var(--red)'
+      }
+    })
+  </script>
+</body>
+</html>
