@@ -274,8 +274,13 @@
 
         <div class="card">
           <h3>Envoyer un message</h3>
-          <!-- TODO : remplacer TON_ID par l'id Formspree -->
-          <form id="contact-form" action="https://formspree.io/f/TON_ID" method="POST">
+          <!-- FormSubmit (formsubmit.co) : envoie chaque message par email, sans compte ni serveur -->
+          <form id="contact-form" action="https://formsubmit.co/ajax/maximrinn@icloud.com" method="POST">
+            <!-- Champs cachés lus par FormSubmit : sujet de l'email, mise en forme, et piège anti-spam
+                 (_honey : invisible pour un humain, un robot le remplit et son message est ignoré) -->
+            <input type="hidden" name="_subject" value="Nouveau message depuis le portfolio" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
             <label for="name">Nom</label>
             <input id="name" name="name" type="text" required placeholder="Votre nom" />
             <label for="email">Email</label>
@@ -331,7 +336,9 @@
           body: new FormData(form),
           headers: { Accept: 'application/json' },
         })
-        if (!res.ok) throw new Error()
+        // FormSubmit répond { success: "true" } : on vérifie aussi ce champ, pas seulement le code HTTP
+        const data = await res.json()
+        if (!res.ok || String(data.success) !== 'true') throw new Error()
         status.textContent = 'Merci, votre message a bien été envoyé.'
         form.reset()
       } catch {
