@@ -10,9 +10,29 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Intro : décide AVANT l'affichage de la page s'il faut jouer l'animation d'ouverture
+       (une seule fois par visite, et jamais si les animations sont désactivées dans le système) -->
+  <script>
+    try {
+      if (!sessionStorage.getItem('intro-vue') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('intro-on')
+      }
+    } catch (e) {}
+  </script>
 </head>
 
 <body>
+  <!-- Intro : la puce qui se défragmente (dessinée en JavaScript dans le canvas) -->
+  <div id="intro" aria-hidden="true">
+    <canvas id="intro-puce"></canvas>
+    <div class="intro-infos">
+      <div class="intro-ligne"><span id="intro-texte"></span><span id="intro-pourcentage">0%</span></div>
+      <div class="intro-barre"><div id="intro-progression"></div></div>
+    </div>
+    <p class="intro-passer">Cliquer pour passer</p>
+  </div>
+
   <header>
     <nav class="container">
       <a href="#accueil" class="logo">Maxim RINN</a>
@@ -35,6 +55,7 @@
       <p class="muted">Futur architecte des systèmes d'information · Alternance dès janvier 2027</p>
       <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
         <a href="#contact" class="btn">Me contacter</a>
+        <a href="CV_Maxim_Rinn.pdf" download class="btn btn-outline">Télécharger mon CV ↓</a>
         <a href="#projets" class="btn btn-outline">Voir mes projets</a>
       </div>
       <p class="muted">
@@ -47,6 +68,13 @@
     <!-- Informations -->
     <section id="profil" class="container">
       <h2>Informations</h2>
+
+      <p class="intro reveal">
+        En <strong>reconversion professionnelle</strong> après deux ans et demi dans le recrutement informatique,
+        j'ai obtenu le titre <strong>RNCP 37680 Administrateur d'Infrastructures Sécurisées</strong> (niveau 6, équivalent Bac+3/4).
+        Je suis aujourd'hui étudiant à <strong>Epitech Strasbourg</strong> en prépa Master
+        <strong>Architecte des Systèmes d'Information</strong> (RNCP 38114, niveau 7, Bac+5), option <strong>Cybersécurité / Cloud</strong>.
+      </p>
 
       <div class="fiche reveal">
         <div class="card">
@@ -252,6 +280,8 @@
             &nbsp;
             <a href="https://github.com/Maxim-Rinn" target="_blank" rel="noreferrer" style="color:var(--yellow);">GitHub →</a>
           </p>
+          <p class="muted" style="margin-top:12px;">CV</p>
+          <p><a href="CV_Maxim_Rinn.pdf" download style="color:var(--yellow);">Télécharger mon CV (PDF) ↓</a></p>
         </div>
 
         <div class="card">
@@ -279,6 +309,271 @@
   <footer>© 2026 Maxim Rinn</footer>
 
   <script>
+    // Intro : une puce cyberpunk s'allume, glitch, puis se défragmente en blocs pour dévoiler le portfolio
+    const intro = document.getElementById('intro')
+    if (document.documentElement.classList.contains('intro-on')) {
+      lancerIntro()
+    } else {
+      intro.remove()
+    }
+
+    function lancerIntro() {
+      const canvas = document.getElementById('intro-puce')
+      const ctx = canvas.getContext('2d')
+      const texte = document.getElementById('intro-texte')
+      const pourcentage = document.getElementById('intro-pourcentage')
+      const progression = document.getElementById('intro-progression')
+
+      // Les étapes, en millisecondes depuis le début
+      const ALLUMAGE = 400   // la puce grésille comme un néon qui s'allume
+      const GLITCH = 1400    // la puce se dédouble en rouge et cyan
+      const DEFRAG = 1700    // la puce éclate en blocs
+      const FIN = 3000       // l'intro disparaît
+      const messages = [[0, '> Connexion au système'], [600, '> Chargement : maxim_rinn.sys'], [GLITCH, '> Défragmentation']]
+
+      const BLOC = 8         // taille d'un bloc de la défragmentation, en pixels
+      const dpr = window.devicePixelRatio || 1   // écrans Retina : on dessine en haute définition
+      let W, H, cx, cy, taille, puce, puceCyan, puceRouge, blocs
+      let debut = null
+
+      try { sessionStorage.setItem('intro-vue', '1') } catch (e) {}
+
+      function dimensionner() {
+        W = innerWidth
+        H = innerHeight
+        canvas.width = W * dpr
+        canvas.height = H * dpr
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+        cx = W / 2
+        cy = H / 2 - 40
+      }
+
+      // Dessine la puce une fois pour toutes dans un canvas caché, qu'on recopie ensuite à chaque image
+      function dessinerPuce(S) {
+        const c = document.createElement('canvas')
+        c.width = c.height = S * dpr
+        const g = c.getContext('2d')
+        g.scale(dpr, dpr)
+        const jaune = '#fcee0a'
+        const cyan = '#00f0ff'
+        const corps = S * 0.62
+        const o = (S - corps) / 2
+        const coupe = corps * 0.12
+
+        // Les broches : 7 par côté
+        g.fillStyle = jaune
+        const longueur = o * 0.7
+        for (let i = 0; i < 7; i++) {
+          const p = o + corps * (0.14 + i * 0.12)
+          g.fillRect(p - 2, o - longueur, 4, longueur)
+          g.fillRect(p - 2, o + corps, 4, longueur)
+          g.fillRect(o - longueur, p - 2, longueur, 4)
+          g.fillRect(o + corps, p - 2, longueur, 4)
+        }
+
+        // Le boîtier, avec les coins coupés comme les cartes du site
+        g.beginPath()
+        g.moveTo(o, o)
+        g.lineTo(o + corps - coupe, o)
+        g.lineTo(o + corps, o + coupe)
+        g.lineTo(o + corps, o + corps)
+        g.lineTo(o + coupe, o + corps)
+        g.lineTo(o, o + corps - coupe)
+        g.closePath()
+        g.fillStyle = '#12121a'
+        g.shadowColor = jaune
+        g.shadowBlur = 18
+        g.fill()
+        g.shadowBlur = 0
+        g.strokeStyle = jaune
+        g.lineWidth = 2
+        g.stroke()
+
+        // Les pistes du circuit, du cœur vers les bords
+        const coeur = corps * 0.46
+        const co = (S - coeur) / 2
+        g.strokeStyle = 'rgba(0, 240, 255, 0.45)'
+        g.lineWidth = 1
+        g.fillStyle = cyan
+        for (let i = 0; i < 4; i++) {
+          const p = co + coeur * (0.2 + i * 0.2)
+          g.beginPath()
+          g.moveTo(p, co); g.lineTo(p, o + 6)
+          g.moveTo(p, co + coeur); g.lineTo(p, o + corps - 6)
+          g.moveTo(co, p); g.lineTo(o + 6, p)
+          g.moveTo(co + coeur, p); g.lineTo(o + corps - 6, p)
+          g.stroke()
+          for (const [x, y] of [[p, o + 6], [p, o + corps - 6], [o + 6, p], [o + corps - 6, p]]) {
+            g.fillRect(x - 1.5, y - 1.5, 3, 3)
+          }
+        }
+
+        // Le cœur et les initiales
+        g.fillStyle = 'rgba(0, 240, 255, 0.08)'
+        g.fillRect(co, co, coeur, coeur)
+        g.strokeStyle = cyan
+        g.lineWidth = 1.5
+        g.strokeRect(co, co, coeur, coeur)
+        g.fillStyle = jaune
+        g.font = `800 ${coeur * 0.36}px Orbitron, sans-serif`
+        g.textAlign = 'center'
+        g.textBaseline = 'middle'
+        g.shadowColor = jaune
+        g.shadowBlur = 10
+        g.fillText('MR', S / 2, S / 2 + 1)
+        g.shadowBlur = 0
+
+        // Le repère de la broche 1, comme sur une vraie puce
+        g.fillStyle = cyan
+        g.beginPath()
+        g.arc(o + corps * 0.1, o + corps * 0.1, 2.5, 0, Math.PI * 2)
+        g.fill()
+        return c
+      }
+
+      // Copie de la puce entièrement d'une couleur (pour le glitch et les blocs colorés)
+      function teinter(source, couleur) {
+        const c = document.createElement('canvas')
+        c.width = source.width
+        c.height = source.height
+        const g = c.getContext('2d')
+        g.drawImage(source, 0, 0)
+        g.globalCompositeOperation = 'source-in'   // ne colorie que là où la puce est dessinée
+        g.fillStyle = couleur
+        g.fillRect(0, 0, c.width, c.height)
+        return c
+      }
+
+      // Découpe la puce en blocs de 8 × 8 et donne à chacun une trajectoire au hasard
+      function preparerBlocs() {
+        const pixels = puce.getContext('2d').getImageData(0, 0, puce.width, puce.height).data
+        const visible = (x, y) => {
+          for (let j = 0; j < BLOC * dpr; j += 2) {
+            for (let i = 0; i < BLOC * dpr; i += 2) {
+              if (pixels[(Math.floor(y * dpr + j) * puce.width + Math.floor(x * dpr + i)) * 4 + 3] > 10) return true
+            }
+          }
+          return false
+        }
+        blocs = []
+        for (let y = 0; y < taille; y += BLOC) {
+          for (let x = 0; x < taille; x += BLOC) {
+            if (!visible(x, y)) continue   // les blocs vides (transparents) sont ignorés
+            const angle = Math.atan2(y - taille / 2, x - taille / 2) + (Math.random() - 0.5) * 0.8
+            blocs.push({
+              x, y, angle,
+              distance: 120 + Math.random() * 420,
+              delai: (x / taille) * 300 + Math.random() * 200,   // la défragmentation balaie de gauche à droite
+              duree: 500 + Math.random() * 300,
+              teinte: Math.random(),
+            })
+          }
+        }
+      }
+
+      function balayage(x0, y0, p) {
+        const y = y0 + p * taille
+        const degrade = ctx.createLinearGradient(0, y - 30, 0, y)
+        degrade.addColorStop(0, 'rgba(0, 240, 255, 0)')
+        degrade.addColorStop(1, 'rgba(0, 240, 255, 0.25)')
+        ctx.fillStyle = degrade
+        ctx.fillRect(x0, y - 30, taille, 30)
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.8)'
+        ctx.fillRect(x0, y, taille, 1)
+      }
+
+      function glitch(x0, y0) {
+        ctx.globalAlpha = 0.7
+        ctx.drawImage(puceRouge, x0 - 4, y0, taille, taille)
+        ctx.drawImage(puceCyan, x0 + 4, y0, taille, taille)
+        ctx.globalAlpha = 1
+        // 6 tranches horizontales, dont certaines décalées au hasard
+        const h = taille / 6
+        for (let i = 0; i < 6; i++) {
+          const decalage = Math.random() < 0.4 ? (Math.random() - 0.5) * 24 : 0
+          ctx.drawImage(puce, 0, i * h * dpr, puce.width, h * dpr, x0 + decalage, y0 + i * h, taille, h)
+        }
+      }
+
+      function defragmenter(t, x0, y0) {
+        for (const b of blocs) {
+          const local = (t - b.delai) / b.duree   // avancement du bloc, de 0 à 1
+          if (local >= 1) continue
+          let dx = 0, dy = 0, source = puce
+          if (local > 0) {
+            const e = local * local * local   // démarre doucement puis accélère
+            // déplacement par sauts de 4px, comme des données numériques
+            dx = Math.round(Math.cos(b.angle) * b.distance * e / 4) * 4
+            dy = Math.round(Math.sin(b.angle) * b.distance * e / 4) * 4
+            source = b.teinte < 0.2 ? puceCyan : b.teinte < 0.3 ? puceRouge : puce
+            ctx.globalAlpha = 1 - local
+          }
+          ctx.drawImage(source, b.x * dpr, b.y * dpr, BLOC * dpr, BLOC * dpr, x0 + b.x + dx, y0 + b.y + dy, BLOC, BLOC)
+          ctx.globalAlpha = 1
+        }
+      }
+
+      // Une image de l'animation (appelée environ 60 fois par seconde)
+      function image(maintenant) {
+        if (debut === null) debut = maintenant
+        const t = maintenant - debut
+        const x0 = cx - taille / 2
+        const y0 = cy - taille / 2
+        ctx.clearRect(0, 0, W, H)
+
+        const p = Math.min(1, t / GLITCH)
+        progression.style.width = p * 100 + '%'
+        pourcentage.textContent = Math.round(p * 100) + '%'
+        const message = messages.filter(([depart]) => t >= depart).pop()[1]
+        if (texte.textContent !== message) texte.textContent = message
+
+        if (t < DEFRAG) {
+          ctx.globalAlpha = t < ALLUMAGE && Math.random() > t / ALLUMAGE ? 0.15 : 1   // grésillement de l'allumage
+          if (t >= GLITCH) glitch(x0, y0)
+          else ctx.drawImage(puce, x0, y0, taille, taille)
+          ctx.globalAlpha = 1
+          if (t >= ALLUMAGE && t < GLITCH) balayage(x0, y0, (t - ALLUMAGE) / (GLITCH - ALLUMAGE))
+        } else {
+          defragmenter(t - DEFRAG, x0, y0)
+          if (!intro.classList.contains('intro-sortie')) {
+            intro.classList.add('intro-sortie')                             // le fond noir s'efface
+            document.documentElement.classList.add('intro-atterrissage')   // l'accueil "atterrit"
+          }
+        }
+
+        if (t < FIN) requestAnimationFrame(image)
+        else terminer()
+      }
+
+      // Un clic ou une touche : on saute directement à la défragmentation
+      function passer() {
+        if (debut !== null && performance.now() - debut < DEFRAG) debut = performance.now() - DEFRAG
+      }
+
+      function terminer() {
+        intro.remove()
+        document.documentElement.classList.remove('intro-on')
+        removeEventListener('keydown', passer)
+        removeEventListener('resize', dimensionner)
+      }
+
+      dimensionner()
+      addEventListener('resize', dimensionner)
+      intro.addEventListener('click', passer)
+      addEventListener('keydown', passer)
+
+      // On attend la police Orbitron (pour les initiales), mais jamais plus de 0,6 seconde
+      const police = document.fonts ? document.fonts.load('800 40px Orbitron') : Promise.resolve()
+      Promise.race([police, new Promise((ok) => setTimeout(ok, 600))]).then(() => {
+        taille = Math.round(Math.min(220, W * 0.55) / BLOC) * BLOC
+        puce = dessinerPuce(taille)
+        puceCyan = teinter(puce, '#00f0ff')
+        puceRouge = teinter(puce, '#ff003c')
+        preparerBlocs()
+        requestAnimationFrame(image)
+      })
+    }
+
     // Menu mobile
     const burger = document.getElementById('burger')
     const menu = document.getElementById('menu')
