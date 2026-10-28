@@ -48,7 +48,14 @@
   --cyan: #00f0ff;      /* cyan : sous titres, tags, survols */
   --red: #ff003c;       /* rouge : glitch et message d'erreur */
   --text: #e4e4e7;      /* texte principal, gris très clair */
-  --muted: #8b8b99;     /* texte secondaire, gris moyen */
+  --muted: #9a9aa8;     /* texte secondaire, gris moyen */
+  --line: rgba(255, 255, 255, 0.07);   /* bordures fines et neutres : plus élégant que du jaune partout */
+}
+
+/* ::selection = le texte que l'on surligne à la souris : fond jaune, texte noir */
+::selection {
+  background: var(--yellow);
+  color: var(--bg);
 }
 
 
@@ -72,16 +79,20 @@ body {
   background-color: var(--bg);        /* fond presque noir */
   color: var(--text);                 /* couleur du texte par défaut */
   font-family: "Inter", sans-serif;   /* police Inter, sinon une police sans empattement de secours */
-  line-height: 1.6;                   /* hauteur de ligne = 1,6 fois la taille du texte : plus aéré */
+  line-height: 1.7;                   /* hauteur de ligne = 1,7 fois la taille du texte : plus aéré */
+  -webkit-font-smoothing: antialiased;   /* texte plus fin et plus net sur Mac */
 
-  /* La grille du fond, dessinée avec deux dégradés superposés :
-     1er dégradé : 1px de cyan à 4 % d'opacité (0.04), puis transparent = une ligne horizontale
-     2e dégradé : pareil mais tourné de 90 degrés = une ligne verticale
+  /* Le fond, dessiné avec trois dégradés superposés :
+     1er : un halo cyan très léger en haut de la page (radial = en cercle)
+     2e : 1px de cyan à 2,5 % d'opacité, puis transparent = une ligne horizontale
+     3e : pareil mais tourné de 90 degrés = une ligne verticale
      rgba(rouge, vert, bleu, transparence) : transparence de 0 (invisible) à 1 (opaque) */
   background-image:
-    linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;         /* le motif se répète tous les 40px : des carreaux de 40 × 40 */
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 240, 255, 0.07), transparent),
+    linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+  background-size: 100% 100vh, 48px 48px, 48px 48px;   /* une taille par dégradé, dans le même ordre */
+  background-repeat: no-repeat, repeat, repeat;          /* le halo n'apparaît qu'une fois, la grille se répète */
 }
 
 a {
@@ -115,9 +126,9 @@ header {
   left: 0;                 /* du bord gauche... */
   right: 0;                /* ...au bord droit = toute la largeur */
   z-index: 10;             /* ordre d'empilement : 10 = passe AU DESSUS du contenu (qui est à 0) */
-  background: rgba(10, 10, 15, 0.85);                 /* fond noir à 85 % : on devine le contenu dessous */
-  backdrop-filter: blur(6px);                         /* floute ce qui passe derrière : effet verre dépoli */
-  border-bottom: 1px solid rgba(252, 238, 10, 0.2);   /* fine ligne jaune à 20 % sous la barre */
+  background: rgba(10, 10, 15, 0.75);                 /* fond noir à 75 % : on devine le contenu dessous */
+  backdrop-filter: blur(12px);                        /* floute ce qui passe derrière : effet verre dépoli */
+  border-bottom: 1px solid var(--line);               /* fine ligne discrète sous la barre */
 }
 
 nav {
@@ -131,20 +142,45 @@ nav {
   font-family: "Cyberway", sans-serif;  /* police futuriste */
   font-weight: 800;                     /* très gras (400 = normal, 700 = gras) */
   color: var(--yellow);                 /* jaune */
+  letter-spacing: 2px;
 }
 
 /* La liste des liens de navigation */
 .menu {
   display: flex;                        /* liens côte à côte */
-  gap: 24px;                            /* 24px d'écart entre chaque lien */
+  gap: 28px;                            /* 28px d'écart entre chaque lien */
   font-family: "Rajdhani", sans-serif;  /* police "interface tech" */
+  font-size: 15px;
   text-transform: uppercase;            /* tout en MAJUSCULES */
-  letter-spacing: 1px;                  /* lettres légèrement espacées */
+  letter-spacing: 2px;                  /* lettres espacées */
+}
+
+.menu a {
+  position: relative;                   /* repère pour placer le trait de survol */
+  color: var(--muted);                  /* gris au repos : le menu reste discret */
+  transition: color 0.3s;
+}
+
+/* ::after = un élément "fantôme" ajouté après le lien : ici un trait jaune sous le texte.
+   Sa largeur est à 0 au repos, et passe à 100 % au survol : le trait se dessine de gauche à droite */
+.menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;                         /* 4px sous le texte */
+  width: 0;
+  height: 1px;
+  background: var(--yellow);
+  transition: width 0.3s;
 }
 
 /* :hover = QUAND la souris passe sur un lien du menu */
 .menu a:hover {
-  color: var(--yellow);                 /* il devient jaune */
+  color: var(--text);                   /* il s'éclaircit */
+}
+
+.menu a:hover::after {
+  width: 100%;                          /* le trait se dessine */
 }
 
 /* Le bouton [ Menu ] pour mobile */
@@ -163,8 +199,14 @@ nav {
    4. LES SECTIONS ET LES TITRES
    ===================================================================== */
 
+/* counter-reset crée un COMPTEUR nommé "section", remis à 0 au début de <main>.
+   Il sert à numéroter automatiquement les titres : 01, 02, 03... */
+main {
+  counter-reset: section;
+}
+
 section {
-  padding: 96px 0 40px;     /* espace intérieur : 96px en haut, 0 sur les côtés, 40px en bas */
+  padding: 112px 0 48px;    /* espace intérieur : 112px en haut, 0 sur les côtés, 48px en bas */
   scroll-margin-top: 64px;  /* en arrivant par un lien, on s'arrête 64px plus haut :
                                le titre n'est pas caché sous la barre fixe de 64px */
 }
@@ -182,21 +224,49 @@ section {
 h2 {
   font-family: "Orbitron", sans-serif;
   color: var(--yellow);
-  font-size: 32px;
-  margin-bottom: 20px;             /* 20px sous le titre : il reste collé à ses propres blocs */
-  /* Ombre du texte : décalage horizontal 0, vertical 0, flou 10px, jaune à 60 %.
-     Sans décalage, l'ombre fait un halo tout autour = LUEUR NÉON */
-  text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 3px;             /* lettres espacées : plus chic */
+  margin-bottom: 36px;             /* 36px sous le titre, avant ses blocs */
+  /* Ombre du texte : décalage horizontal 0, vertical 0, flou 18px, jaune à 25 %.
+     Sans décalage, l'ombre fait un halo tout autour = LUEUR NÉON, ici tout en douceur */
+  text-shadow: 0 0 18px rgba(252, 238, 10, 0.25);
+}
+
+/* Le numéro "01 //" au dessus de chaque titre de section.
+   counter-increment ajoute 1 au compteur, counter() l'affiche,
+   decimal-leading-zero l'écrit sur deux chiffres (01, 02...) */
+h2::before {
+  counter-increment: section;
+  content: counter(section, decimal-leading-zero) " //";
+  display: block;                  /* sur sa propre ligne, au dessus du titre */
+  font-family: "Rajdhani", sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-shadow: none;
+  margin-bottom: 6px;
+}
+
+/* Le petit trait sous chaque titre de section : jaune qui s'efface vers la droite */
+h2::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, var(--yellow), transparent);
 }
 
 /* Titres des cartes (IDENTITÉ, LANGUES...) */
 h3 {
   font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
   color: var(--cyan);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  font-size: 16px;
 }
 
 /* Petits titres (nom d'un poste, d'un projet) */
@@ -222,7 +292,9 @@ h4 {
   justify-content: center;         /* centrés verticalement */
   align-items: center;             /* centrés horizontalement */
   text-align: center;              /* texte centré */
-  gap: 20px;                       /* 20px entre chaque élément */
+  gap: 24px;                       /* 24px entre chaque élément */
+  /* Un halo jaune très léger derrière le nom (ellipse de 50 % × 40 %, centrée) */
+  background: radial-gradient(ellipse 50% 40% at 50% 45%, rgba(252, 238, 10, 0.05), transparent);
 }
 
 /* Ton nom en grand */
@@ -233,27 +305,33 @@ h4 {
      mais jamais moins de 32px ni plus de 64px.
      Téléphone de 390px : 8 % = 31px, donc 32px. Écran de 1280px : 102px, donc 64px */
   font-size: clamp(32px, 8vw, 64px);
-  text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);   /* lueur néon */
-  animation: glitch 4s infinite;                    /* l'effet glitch, un cycle toutes les 4 secondes */
+  letter-spacing: 0.12em;          /* em = relatif à la taille du texte : l'espacement suit la taille du titre */
+  text-shadow: 0 0 24px rgba(252, 238, 10, 0.3);   /* lueur néon, plus douce */
+  animation: glitch 6s infinite;                    /* l'effet glitch, un cycle toutes les 6 secondes */
 }
 
-/* L'effet glitch sur un cycle de 4 secondes :
-   de 0 % à 92 % (0 à 3,68 s) : rien ne bouge
-   à 94 % (3,76 s) : le texte se décale et se dédouble en rouge à gauche, cyan à droite
-   à 96 % (3,84 s) : même chose dans l'autre sens
-   puis retour au calme jusqu'à 100 % */
+/* Le sous-titre sous le nom */
+.hero > p:first-of-type {
+  letter-spacing: 1px;
+}
+
+/* L'effet glitch sur un cycle de 6 secondes :
+   de 0 % à 94 % : rien ne bouge
+   à 95 % : le texte se décale et se dédouble en rouge à gauche, cyan à droite
+   à 97 % : même chose dans l'autre sens
+   puis retour au calme jusqu'à 100 %. Plus rare et plus bref qu'avant : un clin d'œil, pas un clignotement */
 @keyframes glitch {
-  0%, 92%, 100% {
+  0%, 94%, 100% {
     transform: translate(0);                                   /* à sa place normale */
-    text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);             /* lueur normale */
+    text-shadow: 0 0 24px rgba(252, 238, 10, 0.3);             /* lueur normale */
   }
-  94% {
+  95% {
     transform: translate(-2px, 1px);                           /* 2px à gauche, 1px vers le bas */
-    text-shadow: -3px 0 var(--red), 3px 0 var(--cyan);         /* copie rouge à gauche, cyan à droite */
+    text-shadow: -2px 0 var(--red), 2px 0 var(--cyan);         /* copie rouge à gauche, cyan à droite */
   }
-  96% {
+  97% {
     transform: translate(2px, -1px);                           /* 2px à droite, 1px vers le haut */
-    text-shadow: 3px 0 var(--red), -3px 0 var(--cyan);         /* copies inversées */
+    text-shadow: 2px 0 var(--red), -2px 0 var(--cyan);         /* copies inversées */
   }
 }
 
@@ -268,7 +346,7 @@ h4 {
   font-family: "Rajdhani", sans-serif;
   font-weight: 700;                /* gras */
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   background: var(--yellow);       /* fond jaune */
   color: var(--bg);                /* texte noir */
   border: none;                    /* pas de bordure */
@@ -308,18 +386,37 @@ h4 {
    ===================================================================== */
 
 .card {
-  background: var(--panel);                      /* fond gris foncé */
-  border: 1px solid rgba(252, 238, 10, 0.25);    /* bordure jaune à 25 % */
-  padding: 24px;                                 /* 24px d'espace intérieur */
+  position: relative;                            /* repère pour placer l'accent jaune (::before) */
+  /* Un reflet blanc à 3 % en haut qui s'efface vers le bas, posé sur le fond gris foncé : effet de profondeur */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 60%), var(--panel);
+  border: 1px solid var(--line);                 /* bordure fine et neutre */
+  padding: 28px;                                 /* 28px d'espace intérieur */
   /* coins coupés comme les boutons, avec 16px au lieu de 14px */
   clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
-  transition: transform 0.3s, border-color 0.3s; /* anime en douceur le déplacement ET la bordure */
+  transition: transform 0.4s, border-color 0.4s; /* anime en douceur le déplacement ET la bordure */
 }
 
-/* Au survol : la carte monte de 4px (Y négatif = vers le haut) et sa bordure devient cyan */
+/* L'accent jaune : un petit trait en haut à gauche de chaque carte, comme un repère d'interface */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 2px;
+  background: var(--yellow);
+  transition: width 0.4s;
+}
+
+/* Au survol : la carte monte de 3px (Y négatif = vers le haut), sa bordure prend une teinte cyan
+   et l'accent jaune s'allonge */
 .card:hover {
-  transform: translateY(-4px);
-  border-color: var(--cyan);
+  transform: translateY(-3px);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+.card:hover::before {
+  width: 72px;
 }
 
 /* GRID : range les enfants dans un tableau invisible de colonnes */
@@ -345,18 +442,21 @@ h4 {
 /* Une étiquette (Python, Docker...) */
 .tag {
   font-family: "Rajdhani", sans-serif;
+  font-weight: 500;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 1px;
   color: var(--cyan);
-  border: 1px solid rgba(0, 240, 255, 0.4);   /* bordure cyan à 40 % */
-  padding: 2px 8px;                           /* 2px en haut et en bas, 8px sur les côtés */
-  transition: background 0.3s, color 0.3s;
+  background: rgba(0, 240, 255, 0.04);        /* fond cyan à peine visible */
+  border: 1px solid rgba(0, 240, 255, 0.2);   /* bordure cyan à 20 % */
+  padding: 3px 10px;                          /* 3px en haut et en bas, 10px sur les côtés */
+  transition: background 0.3s, border-color 0.3s;
 }
 
-/* Au survol : l'étiquette se remplit de cyan et son texte devient noir */
+/* Au survol : l'étiquette se teinte de cyan et sa bordure s'allume */
 .tag:hover {
-  background: var(--cyan);
-  color: var(--bg);
+  background: rgba(0, 240, 255, 0.12);
+  border-color: var(--cyan);
 }
 
 
@@ -400,25 +500,25 @@ h4 {
 .identite dd {
   font-family: "Rajdhani", sans-serif;
   font-size: 18px;                 /* plus grand que l'intitulé */
-  margin-bottom: 8px;              /* espace avant l'intitulé suivant */
-  padding-bottom: 6px;             /* espace entre le texte et le trait */
-  border-bottom: 1px solid rgba(252, 238, 10, 0.1);   /* trait jaune très discret (10 %) */
+  margin-bottom: 10px;             /* espace avant l'intitulé suivant */
+  padding-bottom: 8px;             /* espace entre le texte et le trait */
+  border-bottom: 1px solid var(--line);   /* trait fin et discret */
 }
 
 /* Une jauge = deux boîtes l'une dans l'autre.
    .jauge = le fond (la barre vide) */
 .jauge {
-  height: 6px;                                   /* 6px de haut */
-  background: var(--bg);                         /* fond noir */
-  border: 1px solid rgba(252, 238, 10, 0.2);     /* contour jaune à 20 % */
-  margin: 4px 0;                                 /* 4px au dessus et en dessous */
+  height: 4px;                                   /* 4px de haut : plus fin */
+  background: rgba(255, 255, 255, 0.06);         /* fond gris très léger */
+  margin: 6px 0;                                 /* 6px au dessus et en dessous */
 }
 
 /* .jauge div = la boîte À L'INTÉRIEUR de la jauge = le remplissage jaune.
    Sa largeur est écrite dans le HTML : style="width:90%" pour un niveau 9 sur 10 */
 .jauge div {
   height: 100%;                    /* toute la hauteur de la jauge */
-  background: var(--yellow);
+  background: linear-gradient(90deg, rgba(252, 238, 10, 0.4), var(--yellow));   /* du jaune pâle au jaune vif */
+  box-shadow: 0 0 8px rgba(252, 238, 10, 0.35);  /* petite lueur néon */
 }
 
 /* Un attribut = nom + jauge + description */
@@ -447,27 +547,29 @@ h4 {
 
 /* La ligne verticale de la frise, c'est simplement la bordure gauche de la liste */
 .timeline {
-  border-left: 1px solid rgba(252, 238, 10, 0.3);   /* ligne jaune à 30 % */
+  border-left: 1px solid rgba(252, 238, 10, 0.2);   /* ligne jaune à 20 % */
   padding-left: 24px;                               /* le texte commence 24px après la ligne */
 }
 
 /* Une étape de la frise */
 .timeline li {
-  position: relative;              /* repère pour placer le carré jaune */
-  margin-bottom: 28px;             /* espace entre deux étapes */
+  position: relative;              /* repère pour placer le losange jaune */
+  margin-bottom: 32px;             /* espace entre deux étapes */
 }
 
-/* Le petit carré jaune devant chaque étape.
-   left: -30px = 24px de padding + 1px de ligne + 5px (la moitié du carré de 10px)
-   : le carré est pile centré sur la ligne */
+/* Le petit losange jaune devant chaque étape : un carré de 8px tourné de 45 degrés.
+   left: -29px = 24px de padding + 1px de ligne + 4px (la moitié du carré de 8px)
+   : le losange est pile centré sur la ligne */
 .timeline li::before {
   content: "";
   position: absolute;
-  left: -30px;
-  top: 6px;                        /* aligné avec la première ligne de texte */
-  width: 10px;
-  height: 10px;
+  left: -29px;
+  top: 8px;                        /* aligné avec la première ligne de texte */
+  width: 8px;
+  height: 8px;
   background: var(--yellow);
+  transform: rotate(45deg);        /* le carré devient un losange */
+  box-shadow: 0 0 10px rgba(252, 238, 10, 0.5);   /* petite lueur néon */
 }
 
 /* Les dates, en cyan */
@@ -475,7 +577,8 @@ h4 {
   font-family: "Rajdhani", sans-serif;
   color: var(--cyan);
   text-transform: uppercase;
-  font-size: 14px;
+  letter-spacing: 2px;
+  font-size: 13px;
 }
 
 /* Les missions sont une liste DANS l'étape */
@@ -515,10 +618,11 @@ textarea {
   width: 100%;                     /* toute la largeur de la carte */
   padding: 12px;                   /* espace intérieur pour ne pas coller le texte au bord */
   margin-bottom: 16px;             /* espace avant l'intitulé suivant */
-  background: var(--bg);           /* fond noir */
+  background: rgba(0, 0, 0, 0.3);  /* fond noir transparent */
   color: var(--text);              /* texte clair */
   font: inherit;                   /* même police que la page (les navigateurs en mettent une autre par défaut) */
-  border: 1px solid rgba(252, 238, 10, 0.3);   /* bordure jaune à 30 % */
+  border: 1px solid var(--line);   /* bordure fine et neutre */
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 /* :focus = QUAND on a cliqué dans le champ et qu'on tape dedans */
@@ -526,6 +630,7 @@ input:focus,
 textarea:focus {
   outline: none;                   /* retire le contour bleu ajouté par le navigateur */
   border-color: var(--cyan);       /* la bordure devient cyan */
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.1);   /* halo cyan de 3px autour du champ */
 }
 
 /* Le message "Transmission..." / "Message transmis" / "Échec" (#form-status = id="form-status") */
@@ -539,8 +644,9 @@ footer {
   text-align: center;
   padding: 24px;
   color: var(--muted);
-  font-size: 14px;
-  border-top: 1px solid rgba(252, 238, 10, 0.2);   /* ligne jaune à 20 % au dessus */
+  font-size: 13px;
+  letter-spacing: 1px;
+  border-top: 1px solid var(--line);   /* ligne discrète au dessus */
   margin-top: 60px;
 }
 
@@ -610,7 +716,13 @@ footer {
   }
 
   h2 {
-    font-size: 24px;               /* titres plus petits sur mobile */
+    font-size: 22px;               /* titres plus petits sur mobile */
+    letter-spacing: 2px;
+  }
+
+  /* Dans le menu déroulant, le trait de survol n'est pas utile */
+  .menu a::after {
+    display: none;
   }
 }
 
