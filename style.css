@@ -668,7 +668,7 @@ footer {
 
 
 /* =====================================================================
-   11 bis. L'INTRO (la puce qui se défragmente)
+   11 bis. L'INTRO (la puce qui se déchiffre)
    Le petit script dans <head> ajoute la classe "intro-on" sur <html> quand il faut la jouer.
    Sans cette classe (déjà vue, animations désactivées, JavaScript coupé), l'intro reste cachée.
    ===================================================================== */
@@ -703,7 +703,7 @@ html.intro-on body {
   to { overflow: auto; }
 }
 
-/* La défragmentation : le fond noir devient transparent, on voit le site apparaître derrière les blocs */
+/* Le déchiffrement : le fond noir devient transparent, on voit le site apparaître derrière les blocs */
 html.intro-on #intro.intro-sortie {
   background-color: transparent;
   pointer-events: none;                /* les clics passent à travers, vers le site */

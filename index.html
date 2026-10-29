@@ -23,7 +23,7 @@
 </head>
 
 <body>
-  <!-- Intro : la puce qui se défragmente (dessinée en JavaScript dans le canvas) -->
+  <!-- Intro : la puce qui se déchiffre (dessinée en JavaScript dans le canvas) -->
   <div id="intro" aria-hidden="true">
     <canvas id="intro-puce"></canvas>
     <div class="intro-infos">
@@ -309,7 +309,7 @@
   <footer>© 2026 Maxim Rinn</footer>
 
   <script>
-    // Intro : une puce cyberpunk s'allume, glitch, puis se défragmente en blocs pour dévoiler le portfolio
+    // Intro : une puce cyberpunk s'allume, glitch, puis se déchiffre en blocs pour dévoiler le portfolio
     const intro = document.getElementById('intro')
     if (document.documentElement.classList.contains('intro-on')) {
       lancerIntro()
@@ -329,9 +329,9 @@
       const GLITCH = 1400    // la puce se dédouble en rouge et cyan
       const DEFRAG = 1700    // la puce éclate en blocs
       const FIN = 3000       // l'intro disparaît
-      const messages = [[0, '> Connexion au système'], [600, '> Chargement : maxim_rinn.sys'], [GLITCH, '> Défragmentation']]
+      const messages = [[0, '> Connexion au système'], [600, '> Chargement : maxim_rinn.sys'], [GLITCH, '> Déchiffrement']]
 
-      const BLOC = 8         // taille d'un bloc de la défragmentation, en pixels
+      const BLOC = 8         // taille d'un bloc de le déchiffrement, en pixels
       const dpr = window.devicePixelRatio || 1   // écrans Retina : on dessine en haute définition
       let W, H, cx, cy, taille, puce, puceCyan, puceRouge, blocs
       let debut = null
@@ -463,7 +463,7 @@
             blocs.push({
               x, y, angle,
               distance: 120 + Math.random() * 420,
-              delai: (x / taille) * 300 + Math.random() * 200,   // la défragmentation balaie de gauche à droite
+              delai: (x / taille) * 300 + Math.random() * 200,   // le déchiffrement balaie de gauche à droite
               duree: 500 + Math.random() * 300,
               teinte: Math.random(),
             })
@@ -545,7 +545,7 @@
         else terminer()
       }
 
-      // Un clic ou une touche : on saute directement à la défragmentation
+      // Un clic ou une touche : on saute directement à le déchiffrement
       function passer() {
         if (debut !== null && performance.now() - debut < DEFRAG) debut = performance.now() - DEFRAG
       }
