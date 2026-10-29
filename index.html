@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Intro : décide AVANT l'affichage de la page s'il faut jouer l'animation d'ouverture
+       (une seule fois par visite, et jamais si les animations sont désactivées dans le système) -->
   <script>
     try {
       if (!sessionStorage.getItem('intro-vue') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -21,6 +23,7 @@
 </head>
 
 <body>
+  <!-- Intro : la puce qui se défragmente (dessinée en JavaScript dans le canvas) -->
   <div id="intro" aria-hidden="true">
     <canvas id="intro-puce"></canvas>
     <div class="intro-infos">
@@ -46,6 +49,7 @@
   </header>
 
   <main>
+    <!-- Accueil -->
     <section id="accueil" class="hero container">
       <h1>MAXIM RINN</h1>
       <p class="muted">Futur architecte des systèmes d'information · Alternance dès janvier 2027</p>
@@ -61,6 +65,7 @@
       </p>
     </section>
 
+    <!-- Informations -->
     <section id="profil" class="container">
       <h2>Informations</h2>
 
@@ -123,6 +128,7 @@
       </div>
     </section>
 
+    <!-- Compétences -->
     <section id="competences" class="container">
       <h2>Compétences</h2>
 
@@ -157,6 +163,7 @@
       </div>
     </section>
 
+    <!-- Parcours -->
     <section id="parcours" class="container">
       <h2>Parcours</h2>
       <div class="grid-2 reveal">
@@ -201,6 +208,7 @@
       </div>
     </section>
 
+    <!-- Projets -->
     <section id="projets" class="container">
       <h2>Projets</h2>
       <div class="grid-3 reveal">
@@ -234,6 +242,7 @@
       </div>
     </section>
 
+    <!-- Certifications -->
     <section id="certifications" class="container">
       <h2>Certifications</h2>
       <div class="grid-2 reveal">
@@ -245,6 +254,7 @@
       </div>
     </section>
 
+    <!-- Engagement -->
     <section id="engagement" class="container">
       <h2>Engagement associatif</h2>
       <div class="card reveal">
@@ -254,6 +264,7 @@
       </div>
     </section>
 
+    <!-- Contact -->
     <section id="contact" class="container">
       <h2>Contact</h2>
       <div class="grid-2 reveal">
@@ -275,7 +286,10 @@
 
         <div class="card">
           <h3>Envoyer un message</h3>
+          <!-- Formspree (formspree.io) : envoie chaque message par email à l'adresse du compte -->
           <form id="contact-form" action="https://formspree.io/f/mnpppygg" method="POST">
+            <!-- Champs cachés lus par Formspree : sujet de l'email et piège anti-spam
+                 (_gotcha : invisible pour un humain, un robot le remplit et son message est ignoré) -->
             <input type="hidden" name="_subject" value="Nouveau message depuis le portfolio" />
             <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
             <label for="name">Nom</label>
@@ -295,6 +309,7 @@
   <footer>© 2026 Maxim Rinn</footer>
 
   <script>
+    // Intro : une puce cyberpunk s'allume, glitch, puis se défragmente en blocs pour dévoiler le portfolio
     const intro = document.getElementById('intro')
     if (document.documentElement.classList.contains('intro-on')) {
       lancerIntro()
@@ -309,14 +324,15 @@
       const pourcentage = document.getElementById('intro-pourcentage')
       const progression = document.getElementById('intro-progression')
 
-      const ALLUMAGE = 400
-      const GLITCH = 1400
-      const DEFRAG = 1700
-      const FIN = 3000
+      // Les étapes, en millisecondes depuis le début
+      const ALLUMAGE = 400   // la puce grésille comme un néon qui s'allume
+      const GLITCH = 1400    // la puce se dédouble en rouge et cyan
+      const DEFRAG = 1700    // la puce éclate en blocs
+      const FIN = 3000       // l'intro disparaît
       const messages = [[0, '> Connexion au système'], [600, '> Chargement : maxim_rinn.sys'], [GLITCH, '> Défragmentation']]
 
-      const BLOC = 8
-      const dpr = window.devicePixelRatio || 1
+      const BLOC = 8         // taille d'un bloc de la défragmentation, en pixels
+      const dpr = window.devicePixelRatio || 1   // écrans Retina : on dessine en haute définition
       let W, H, cx, cy, taille, puce, puceCyan, puceRouge, blocs
       let debut = null
 
@@ -332,6 +348,7 @@
         cy = H / 2 - 40
       }
 
+      // Dessine la puce une fois pour toutes dans un canvas caché, qu'on recopie ensuite à chaque image
       function dessinerPuce(S) {
         const c = document.createElement('canvas')
         c.width = c.height = S * dpr
@@ -343,6 +360,7 @@
         const o = (S - corps) / 2
         const coupe = corps * 0.12
 
+        // Les broches : 7 par côté
         g.fillStyle = jaune
         const longueur = o * 0.7
         for (let i = 0; i < 7; i++) {
@@ -353,6 +371,7 @@
           g.fillRect(o + corps, p - 2, longueur, 4)
         }
 
+        // Le boîtier, avec les coins coupés comme les cartes du site
         g.beginPath()
         g.moveTo(o, o)
         g.lineTo(o + corps - coupe, o)
@@ -370,6 +389,7 @@
         g.lineWidth = 2
         g.stroke()
 
+        // Les pistes du circuit, du cœur vers les bords
         const coeur = corps * 0.46
         const co = (S - coeur) / 2
         g.strokeStyle = 'rgba(0, 240, 255, 0.45)'
@@ -388,6 +408,7 @@
           }
         }
 
+        // Le cœur et les initiales
         g.fillStyle = 'rgba(0, 240, 255, 0.08)'
         g.fillRect(co, co, coeur, coeur)
         g.strokeStyle = cyan
@@ -402,6 +423,7 @@
         g.fillText('MR', S / 2, S / 2 + 1)
         g.shadowBlur = 0
 
+        // Le repère de la broche 1, comme sur une vraie puce
         g.fillStyle = cyan
         g.beginPath()
         g.arc(o + corps * 0.1, o + corps * 0.1, 2.5, 0, Math.PI * 2)
@@ -409,18 +431,20 @@
         return c
       }
 
+      // Copie de la puce entièrement d'une couleur (pour le glitch et les blocs colorés)
       function teinter(source, couleur) {
         const c = document.createElement('canvas')
         c.width = source.width
         c.height = source.height
         const g = c.getContext('2d')
         g.drawImage(source, 0, 0)
-        g.globalCompositeOperation = 'source-in'
+        g.globalCompositeOperation = 'source-in'   // ne colorie que là où la puce est dessinée
         g.fillStyle = couleur
         g.fillRect(0, 0, c.width, c.height)
         return c
       }
 
+      // Découpe la puce en blocs de 8 × 8 et donne à chacun une trajectoire au hasard
       function preparerBlocs() {
         const pixels = puce.getContext('2d').getImageData(0, 0, puce.width, puce.height).data
         const visible = (x, y) => {
@@ -434,12 +458,12 @@
         blocs = []
         for (let y = 0; y < taille; y += BLOC) {
           for (let x = 0; x < taille; x += BLOC) {
-            if (!visible(x, y)) continue
+            if (!visible(x, y)) continue   // les blocs vides (transparents) sont ignorés
             const angle = Math.atan2(y - taille / 2, x - taille / 2) + (Math.random() - 0.5) * 0.8
             blocs.push({
               x, y, angle,
               distance: 120 + Math.random() * 420,
-              delai: (x / taille) * 300 + Math.random() * 200,
+              delai: (x / taille) * 300 + Math.random() * 200,   // la défragmentation balaie de gauche à droite
               duree: 500 + Math.random() * 300,
               teinte: Math.random(),
             })
@@ -463,6 +487,7 @@
         ctx.drawImage(puceRouge, x0 - 4, y0, taille, taille)
         ctx.drawImage(puceCyan, x0 + 4, y0, taille, taille)
         ctx.globalAlpha = 1
+        // 6 tranches horizontales, dont certaines décalées au hasard
         const h = taille / 6
         for (let i = 0; i < 6; i++) {
           const decalage = Math.random() < 0.4 ? (Math.random() - 0.5) * 24 : 0
@@ -472,11 +497,12 @@
 
       function defragmenter(t, x0, y0) {
         for (const b of blocs) {
-          const local = (t - b.delai) / b.duree
+          const local = (t - b.delai) / b.duree   // avancement du bloc, de 0 à 1
           if (local >= 1) continue
           let dx = 0, dy = 0, source = puce
           if (local > 0) {
-            const e = local * local * local
+            const e = local * local * local   // démarre doucement puis accélère
+            // déplacement par sauts de 4px, comme des données numériques
             dx = Math.round(Math.cos(b.angle) * b.distance * e / 4) * 4
             dy = Math.round(Math.sin(b.angle) * b.distance * e / 4) * 4
             source = b.teinte < 0.2 ? puceCyan : b.teinte < 0.3 ? puceRouge : puce
@@ -487,6 +513,7 @@
         }
       }
 
+      // Une image de l'animation (appelée environ 60 fois par seconde)
       function image(maintenant) {
         if (debut === null) debut = maintenant
         const t = maintenant - debut
@@ -501,7 +528,7 @@
         if (texte.textContent !== message) texte.textContent = message
 
         if (t < DEFRAG) {
-          ctx.globalAlpha = t < ALLUMAGE && Math.random() > t / ALLUMAGE ? 0.15 : 1
+          ctx.globalAlpha = t < ALLUMAGE && Math.random() > t / ALLUMAGE ? 0.15 : 1   // grésillement de l'allumage
           if (t >= GLITCH) glitch(x0, y0)
           else ctx.drawImage(puce, x0, y0, taille, taille)
           ctx.globalAlpha = 1
@@ -509,8 +536,8 @@
         } else {
           defragmenter(t - DEFRAG, x0, y0)
           if (!intro.classList.contains('intro-sortie')) {
-            intro.classList.add('intro-sortie')
-            document.documentElement.classList.add('intro-atterrissage')
+            intro.classList.add('intro-sortie')                             // le fond noir s'efface
+            document.documentElement.classList.add('intro-atterrissage')   // l'accueil "atterrit"
           }
         }
 
@@ -518,6 +545,7 @@
         else terminer()
       }
 
+      // Un clic ou une touche : on saute directement à la défragmentation
       function passer() {
         if (debut !== null && performance.now() - debut < DEFRAG) debut = performance.now() - DEFRAG
       }
@@ -534,6 +562,7 @@
       intro.addEventListener('click', passer)
       addEventListener('keydown', passer)
 
+      // On attend la police Orbitron (pour les initiales), mais jamais plus de 0,6 seconde
       const police = document.fonts ? document.fonts.load('800 40px Orbitron') : Promise.resolve()
       Promise.race([police, new Promise((ok) => setTimeout(ok, 600))]).then(() => {
         taille = Math.round(Math.min(220, W * 0.55) / BLOC) * BLOC
@@ -545,6 +574,7 @@
       })
     }
 
+    // Menu mobile
     const burger = document.getElementById('burger')
     const menu = document.getElementById('menu')
     burger.addEventListener('click', () => {
@@ -558,6 +588,7 @@
       })
     })
 
+    // Apparition des blocs au scroll
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -568,6 +599,7 @@
     }, { threshold: 0.1 })
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
 
+    // Formulaire de contact (envoi sans rechargement)
     const form = document.getElementById('contact-form')
     const status = document.getElementById('form-status')
     form.addEventListener('submit', async (e) => {
@@ -580,11 +612,13 @@
           body: new FormData(form),
           headers: { Accept: 'application/json' },
         })
+        // Formspree répond { ok: true } en cas de succès, sinon { errors: [{ message }] }
         const data = await res.json()
         if (!res.ok || !data.ok) throw new Error(data.errors?.map((e) => e.message).join(', ') || res.status)
         status.textContent = 'Merci, votre message a bien été envoyé.'
         form.reset()
       } catch (err) {
+        // Affiche la vraie raison renvoyée par Formspree (ex. email du compte pas encore vérifié)
         console.error('Formspree :', err.message)
         status.textContent = "L'envoi a échoué. Vous pouvez m'écrire à maximrinn@icloud.com"
         status.style.color = 'var(--red)'
