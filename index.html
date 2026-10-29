@@ -331,7 +331,7 @@
       const FIN = 3000       // l'intro disparaît
       const messages = [[0, '> Connexion au système'], [600, '> Chargement : maxim_rinn.sys'], [GLITCH, '> Déchiffrement']]
 
-      const BLOC = 8         // taille d'un bloc de le déchiffrement, en pixels
+      const BLOC = 8         // taille d'un bloc du déchiffrement, en pixels
       const dpr = window.devicePixelRatio || 1   // écrans Retina : on dessine en haute définition
       let W, H, cx, cy, taille, puce, puceCyan, puceRouge, blocs
       let debut = null
@@ -545,7 +545,7 @@
         else terminer()
       }
 
-      // Un clic ou une touche : on saute directement à le déchiffrement
+      // Un clic ou une touche : on saute directement au déchiffrement
       function passer() {
         if (debut !== null && performance.now() - debut < DEFRAG) debut = performance.now() - DEFRAG
       }
