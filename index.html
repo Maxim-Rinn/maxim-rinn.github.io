@@ -36,7 +36,7 @@
   <header>
     <nav class="container">
       <a href="#accueil" class="logo">Maxim RINN</a>
-      <button class="burger" id="burger" aria-label="Ouvrir le menu">Menu</button>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
       <ul class="menu" id="menu">
         <li><a href="#profil">Profil</a></li>
         <li><a href="#parcours">Parcours</a></li>
@@ -588,14 +588,19 @@
     // Menu mobile
     const burger = document.getElementById('burger')
     const menu = document.getElementById('menu')
+    // Les 3 barres deviennent une croix quand le menu est ouvert (voir .burger.open dans style.css)
+    function basculerMenu(ouvert) {
+      menu.classList.toggle('open', ouvert)
+      burger.classList.toggle('open', ouvert)
+      burger.setAttribute('aria-expanded', ouvert)
+      burger.setAttribute('aria-label', ouvert ? 'Fermer le menu' : 'Ouvrir le menu')
+    }
     burger.addEventListener('click', () => {
-      menu.classList.toggle('open')
-      burger.textContent = menu.classList.contains('open') ? 'Fermer' : 'Menu'
+      basculerMenu(!menu.classList.contains('open'))
     })
     menu.querySelectorAll('a').forEach((lien) => {
       lien.addEventListener('click', () => {
-        menu.classList.remove('open')
-        burger.textContent = 'Menu'
+        basculerMenu(false)
       })
     })
 

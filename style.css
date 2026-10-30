@@ -183,15 +183,34 @@ nav {
   width: 100%;                          /* le trait se dessine */
 }
 
-/* Le bouton [ Menu ] pour mobile */
+/* Le bouton "3 barres" (burger) pour mobile */
 .burger {
   display: none;                        /* CACHÉ sur ordinateur (il apparaît sur mobile, voir bloc 12) */
   background: none;                     /* pas de fond gris de bouton */
   border: none;                         /* pas de bordure de bouton */
-  color: var(--yellow);                 /* texte jaune */
-  font-family: "Rajdhani", sans-serif;
-  font-size: 16px;
+  padding: 8px 4px;                     /* zone de clic un peu plus grande que les barres */
   cursor: pointer;                      /* petite main au survol = "c'est cliquable" */
+}
+
+/* Chacune des 3 barres horizontales */
+.burger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  margin: 6px 0;                        /* écart entre les barres */
+  background: var(--yellow);            /* barres jaunes */
+  transition: transform 0.25s, opacity 0.25s;
+}
+
+/* Menu ouvert : les barres se transforment en croix */
+.burger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);    /* descend sur la barre du milieu et penche */
+}
+.burger.open span:nth-child(2) {
+  opacity: 0;                                  /* la barre du milieu disparaît */
+}
+.burger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);  /* remonte sur la barre du milieu et penche dans l'autre sens */
 }
 
 
@@ -826,7 +845,7 @@ html.intro-atterrissage .hero > :nth-child(4) { animation-delay: 0.36s; }
     display: flex;
   }
 
-  /* Le bouton [ Menu ] apparaît */
+  /* Le bouton "3 barres" apparaît */
   .burger {
     display: block;
   }
